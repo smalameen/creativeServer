@@ -27,6 +27,9 @@ app.get('/', (req, res) =>{
 const client = new MongoClient(uri, { useNewUrlParser: true ,useUnifiedTopology: true});
 client.connect(err => {
   const dataCollection = client.db("creative_agency").collection("userData");
+  const courseDataCollection = client.db("creative_agency").collection("course");
+  const UserLogInDataCollection = client.db("creative_agency").collection("login");
+
 
 
   app.post ('/userData' ,  (req, res) => {
@@ -38,7 +41,15 @@ client.connect(err => {
       })
       
   })
-
+  app.post ('/userLogin' ,  (req, res) => {
+    const userLogInData = req.body;
+    console.log(userLogInData);
+    UserLogInDataCollection.insertOne(userLogInData)
+    .then(result =>{
+        res.send(result.insertedCount > 0)
+    })
+    
+})
 
   app.get ('/findUserByMail' ,  (req, res) => {
     const mail = req.body;
@@ -65,10 +76,31 @@ app.post ('/addCourse' ,  (req, res) => {
     return res.status(5001).send({meg:"Failed to load image"})
 }
     })
-    return res.send({name: files.name, path:`/${files.name}`})
-
-
+    const newImg = req.files.file.data;
+    const enCodedImg = newImg.toString('base64');
+    
+    const image ={
+        contentType: req.files.file.mimetype,
+        size: req.files.file.size,
+        img:Buffer.from(enCodedImg, 'base64')
+    };
+    courseDataCollection.insertOne({image, pass, email})
+    .then(results => {
+        res.send(results.insertedCount > 0)
+    }) 
    
+});
+
+
+
+
+
+
+app.get('/newCourses', (req, res) => {
+    courseDataCollection.find({})
+        .toArray((err, documents) => {
+            res.send(documents);
+        })
 });
  
 });
