@@ -29,6 +29,7 @@ client.connect(err => {
   const dataCollection = client.db("creative_agency").collection("userData");
   const courseDataCollection = client.db("creative_agency").collection("course");
   const UserLogInDataCollection = client.db("creative_agency").collection("login");
+  const userDataCollection = client.db("creative_agency").collection("userReview");
 
 
 
@@ -90,8 +91,37 @@ app.post ('/addCourse' ,  (req, res) => {
     }) 
    
 });
+  
 
+//Review Api of users
+app.post ('/userReview' ,  (req, res) => {
+    const files = req.files.file;
+    const review = req.body.review;
+    const email = req.body.email;
+    const designations = req.body.designations;
 
+    console.log(files,review, email,designations);
+
+    // const filePath = `${__dirname}/doctors/${files.name}`
+
+//     files.mv(filePath, error => {
+//     if(error){
+//     console.log(error);
+//     return res.status(5001).send({meg:"Failed to load image"})
+// }
+const newImg = req.files.file.data;
+const enCodedImg = newImg.toString('base64');
+
+const image ={
+    contentType: req.files.file.mimetype,
+    size: req.files.file.size,
+    img:Buffer.from(enCodedImg, 'base64')
+};
+
+userDataCollection.insertOne({review, email, image,designations})
+    .then(results => {
+        res.send(results.insertedCount > 0)
+    }) 
 
 
 
@@ -102,8 +132,15 @@ app.get('/newCourses', (req, res) => {
             res.send(documents);
         })
 });
+
+app.get('/users', (req, res) => {
+    userDataCollection.find({})
+        .toArray((err, documents) => {
+            res.send(documents);
+        })
+});
  
 });
 
 
-app.listen(process.env.PORT || port)
+app.listen(process.env.PORT || port)})
