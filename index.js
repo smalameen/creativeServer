@@ -30,9 +30,7 @@ client.connect(err => {
   const courseDataCollection = client.db("creative_agency").collection("course");
   const UserLogInDataCollection = client.db("creative_agency").collection("login");
   const userDataCollection = client.db("creative_agency").collection("userReview");
-
-
-
+  
   app.post ('/userData' ,  (req, res) => {
       const userData = req.body;
       console.log(userData);
