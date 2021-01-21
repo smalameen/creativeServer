@@ -13,7 +13,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('doctors'));
+app.use(express.static('course'));
+app.use(express.static('userReview'));
 app.use(fileUpload());
 
 const port = 5001;
@@ -69,12 +70,12 @@ app.post ('/addCourse' ,  (req, res) => {
     const email = req.body.email;
     console.log(files, pass, email);
 
-    files.mv(`${__dirname}/course/${files.name}`, error => {
-    if(error){
-    console.log(error);
-    return res.status(5001).send({meg:"Failed to load image"})
-}
-    })
+//     files.mv(`${__dirname}/course/${files.name}`, error => {
+//     if(error){
+//     console.log(error);
+//     return res.status(5001).send({meg:"Failed to load image"})
+// }
+//     })
     const newImg = req.files.file.data;
     const enCodedImg = newImg.toString('base64');
     
