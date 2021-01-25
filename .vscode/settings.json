@@ -1,6 +1,0 @@
-{
-    "terminal.integrated.confirmOnExit": true,
-    "terminal.integrated.copyOnSelection": true,
-    "terminal.integrated.cursorStyle": "line",
-    "terminal.integrated.enableBell": true
-}

@@ -13,8 +13,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('course'));
 app.use(express.static('userReview'));
+app.use(express.static('course'));
 app.use(fileUpload());
 
 const port = 5001;
@@ -69,13 +69,6 @@ app.post ('/addCourse' ,  (req, res) => {
     const pass = req.body.pass;
     const email = req.body.email;
     console.log(files, pass, email);
-
-//     files.mv(`${__dirname}/course/${files.name}`, error => {
-//     if(error){
-//     console.log(error);
-//     return res.status(5001).send({meg:"Failed to load image"})
-// }
-//     })
     const newImg = req.files.file.data;
     const enCodedImg = newImg.toString('base64');
     
@@ -84,6 +77,8 @@ app.post ('/addCourse' ,  (req, res) => {
         size: req.files.file.size,
         img:Buffer.from(enCodedImg, 'base64')
     };
+    
+    
     courseDataCollection.insertOne({image, pass, email})
     .then(results => {
         res.send(results.insertedCount > 0)
@@ -98,18 +93,10 @@ app.post ('/userReview' ,  (req, res) => {
     const review = req.body.review;
     const email = req.body.email;
     const designations = req.body.designations;
-
     console.log(files,review, email,designations);
 
-    // const filePath = `${__dirname}/doctors/${files.name}`
-
-//     files.mv(filePath, error => {
-//     if(error){
-//     console.log(error);
-//     return res.status(5001).send({meg:"Failed to load image"})
-// }
-const newImg = req.files.file.data;
-const enCodedImg = newImg.toString('base64');
+   const newImg = req.files.file.data;
+    const enCodedImg = newImg.toString('base64');
 
 const image ={
     contentType: req.files.file.mimetype,
@@ -117,29 +104,32 @@ const image ={
     img:Buffer.from(enCodedImg, 'base64')
 };
 
-userDataCollection.insertOne({review, email, image,designations})
+userDataCollection.insertOne({review, email, image, designations})
     .then(results => {
         res.send(results.insertedCount > 0)
     }) 
 
 
-
+});
 
 app.get('/newCourses', (req, res) => {
     courseDataCollection.find({})
-        .toArray((err, documents) => {
-            res.send(documents);
+        .toArray((err, documentsCourse) => {
+            res.send(documentsCourse);
         })
 });
 
 app.get('/users', (req, res) => {
     userDataCollection.find({})
-        .toArray((err, documents) => {
-            res.send(documents);
+        .toArray((error, documentsUser) => {
+            res.send(documentsUser);
         })
 });
  
+
+
+
 });
 
 
-app.listen(process.env.PORT || port)})
+app.listen(process.env.PORT || port)
